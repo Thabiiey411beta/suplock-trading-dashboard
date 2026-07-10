@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # GBrain: Postgres-Native Long-Term Memory System
+  postgres-db:
+    image: ankane/pgvector:v0.5.1 # Utilizing a vector-enabled Postgres image ideal for AI memory and graph embeddings
+    container_name: gbrain-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-gbrain_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-suplock_secure_pass_2026}
+      POSTGRES_DB: ${DB_NAME:-gbrain_memory}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gbrain_admin -d gbrain_memory"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Core Loop Orchestrator (TypeScript Daemon running Loop Engineering)
+  loop-orchestrator:
+    build:
+      context: .
+      dockerfile: ./services/loop-orchestrator/Dockerfile
+    container_name: suplock-loop-orchestrator
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://gbrain_admin:suplock_secure_pass_2026@postgres-db:5432/gbrain_memory
+      - NODE_ENV=development
+      - PORT=3000
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
