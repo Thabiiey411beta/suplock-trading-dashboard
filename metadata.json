@@ -1,6 +1,6 @@
 {
   "name": "AI Trading Assistant & Verification Dashboard",
-  "description": "A professional real-time trading dashboard designed to help manual traders verify AI-generated market signals using macro sentiment, inter-market correlation tools, and probability boundaries.",
+  "description": "A professional real-time trading dashboard designed to help manual traders verify AI-generated market signals using macro sentiment, inter-market correlation tools, and probability based risk scoring.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
